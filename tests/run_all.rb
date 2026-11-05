@@ -56,7 +56,8 @@ ML = Archinsights::Plush
 # ============================================================ core math =====
 suite 'core geometry'
 
-check 'catenary sag 0 at anchors', ML::CoreGeometry.catenary_sag(0.0) == 0.0 && ML::CoreGeometry.catenary_sag(1.0) == 0.0
+check 'catenary sag 0 at anchors',
+      ML::CoreGeometry.catenary_sag(0.0).abs <= 1.0e-9 && ML::CoreGeometry.catenary_sag(1.0).abs <= 1.0e-9
 check 'catenary sag peaks mid-span', close_to(ML::CoreGeometry.catenary_sag(0.5), 1.0, 1.0e-9)
 
 rs0 = ML::CoreGeometry.ring_scale(0.0, 0.2)
@@ -74,15 +75,38 @@ check 'ring_scale monotonic toward apex', mono
 check 'dome height profile 0..1', close_to(ML::CoreGeometry.dome_height_profile(0.0), 0.0, 1.0e-9) && close_to(ML::CoreGeometry.dome_height_profile(1.0), 1.0, 1.0e-9)
 check 'wrinkle envelope zero at seam', ML::CoreGeometry.wrinkle_envelope(0.0) == 0.0
 
-# resample a pentagon to 8 points
+# resample a pentagon mesh loop to 8 evenly spaced seam samples
 pentagon = (0...5).map { |i| Geom::Point3d.new(Math.cos(i * Math::PI / 5), Math.sin(i * Math::PI / 5), 0) }
 loop8 = ML::CoreGeometry.resample_loop(pentagon, 8)
 check 'resample_loop count', loop8.size == 8
-perim = 0.0
-(0...8).each { |i| perim += loop8[i].distance(loop8[(i + 1) % 8]) }
-orig_perim = 0.0
-(0...5).each { |i| orig_perim += pentagon[i].distance(pentagon[(i + 1) % 5]) }
-check 'resample_loop arc length preserved', close_to(perim, orig_perim, orig_perim * 0.05)
+
+# The real property of resampling: every sample sits on the boundary and its
+# cumulative arc position is evenly spaced. (The chordal perimeter between
+# samples is allowed to cut polygon corners, so it is not compared here.)
+edges = []
+(0...5).each { |i| edges << pentagon[i].distance(pentagon[(i + 1) % 5]) }
+total_len = edges.reduce(0.0, :+)
+positions = loop8.map do |p|
+  best = nil
+  (0...5).each do |i|
+    a = pentagon[i]; b = pentagon[(i + 1) % 5]
+    ab_len = edges[i]
+    next if ab_len < 1.0e-9
+    t = ((p.x - a.x) * (b.x - a.x) + (p.y - a.y) * (b.y - a.y)) / (ab_len * ab_len)
+    next if t < -1.0e-6 || t > 1.0 + 1.0e-6
+    dx = a.x + t * (b.x - a.x) - p.x
+    dy = a.y + t * (b.y - a.y) - p.y
+    if (dx * dx + dy * dy) <= 1.0e-12
+      pos = edges[0, i].reduce(0.0, :+) + t * ab_len
+      best = pos if best.nil? || pos < best
+    end
+  end
+  best
+end
+check 'resample_loop samples lie on the boundary', positions.all? { |x| !x.nil? }
+gaps = positions.each_cons(2).map { |x, y| y - x } + [total_len - positions.last]
+gap = total_len / 8.0
+check 'resample_loop evenly spaced by arc length', gaps.all? { |g| (g - gap).abs <= gap * 0.05 }
 
 check 'loop winding flips on reverse',
       ML::CoreGeometry.loop_winding(pentagon) != ML::CoreGeometry.loop_winding(pentagon.reverse)
@@ -111,8 +135,10 @@ check 'arc segments within bounds',
 prof_c = ML::CoreGeometry.cove_profile(10.0, 8)
 check 'cove profile from wall to ceiling', close_to(prof_c.first[0], 0.0, 1.0e-6) && close_to(prof_c.last[0], 10.0, 1.0e-6)
 
-q_seam = ML::CoreGeometry.quilt_height(0.0, 0.5, 'grid', 0.9, 0.45, 6)
-q_mid = ML::CoreGeometry.quilt_height(0.5, 0.5, 'grid', 0.9, 0.45, 6)
+# grid pattern with 6 cells: every k/6 coordinate is a seam line, so sample
+# a true cell centre (1/12 between two seams) for the puff comparison
+q_seam = ML::CoreGeometry.quilt_height(0.0, 0.0, 'grid', 0.9, 0.45, 6)
+q_mid = ML::CoreGeometry.quilt_height(1.0 / 12.0, 1.0 / 12.0, 'grid', 0.9, 0.45, 6)
 check 'quilt groove deeper mid-cell-boundary', q_seam < q_mid
 
 check 'version compare newer', ML::CoreGeometry.newer_version?('2.0.1', '2.0.0')
@@ -238,7 +264,10 @@ check 'every Ruby entry point has a JS function', js_missing.empty?, "missing: #
 html_ids = html_src.scan(/\bid="([^"]+)"/).flatten.uniq
 js_ids  = js_src.scan(/(?:\$|getElementById)\(\s*'([a-zA-Z][a-zA-Z0-9_-]*)'\s*\)/).flatten.uniq
 js_ids += js_src.scan(/'#([a-zA-Z][a-zA-Z0-9_-]*)'/).flatten.uniq
-id_missing = js_ids.uniq.select { |id| !html_ids.include?(id) }
+# '#rrggbb' swatch colour literals are not element ids - keep them out of
+# the id comparison (3- and 6-hex-char tokens are treated as colours)
+hex_color = lambda { |t| t =~ /\A[0-9a-fA-F]{6}\z/ || t =~ /\A[0-9a-fA-F]{3}\z/ }
+id_missing = js_ids.uniq.reject { |id| hex_color.call(id) }.select { |id| !html_ids.include?(id) }
 check 'JS element ids exist in HTML', id_missing.empty?, "missing: #{id_missing.join(', ')}"
 
 # icons on disk match the TOOLS table

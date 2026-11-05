@@ -194,7 +194,8 @@ module Geom
     def angle_between(other)
       d = length * other.length
       return 0.0 if d < 1.0e-12
-      Math.acos([dot(other) / d, 1.0].min.max(-1.0))
+      r = dot(other) / d
+      Math.acos(r.clamp(-1.0, 1.0))
     end
 
     def valid?
@@ -389,7 +390,7 @@ module Sketchup
       super()
       @parent = parent
       @vertices = []
-      pts = points.map { |p| p.is_a?(Point3d) ? p : Point3d.new(*p) }
+      pts = points.map { |p| p.is_a?(Geom::Point3d) ? p : Geom::Point3d.new(*p) }
       pts.each { |p| @vertices << Vertex.new(p, parent) }
       # Newell normal (CCW loop points to +Z when flat on XY)
       nx = 0.0; ny = 0.0; nz = 0.0
@@ -401,11 +402,11 @@ module Sketchup
         ny += (a.z - b.z) * (a.x + b.x)
         nz += (a.x - b.x) * (a.y + b.y)
       end
-      @normal = Vector3d.new(nx, ny, nz)
+      @normal = Geom::Vector3d.new(nx, ny, nz)
       begin
         @normal.normalize!
       rescue
-        @normal = Vector3d.new(0, 0, 1)
+        @normal = Geom::Vector3d.new(0, 0, 1)
       end
       @edges = []
       (0...n).each do |i|
@@ -582,7 +583,7 @@ module Sketchup
 
   class InputPoint
     def initialize
-      @position = Point3d.new(0, 0, 0)
+      @position = Geom::Point3d.new(0, 0, 0)
     end
 
     def pick(_view, _x, _y); self; end

@@ -368,9 +368,8 @@ module Archinsights
           idx << row
         end
         m = rings[0].size
-        ring_span = open_band ? m - 2 : m
         (0...rings.size - 1).each do |i|
-          (0..ring_span).each do |j|
+          (0...m).each do |j|
             jn = open_band ? j + 1 : (j + 1) % m
             next if jn >= m
             a = idx[i][j]

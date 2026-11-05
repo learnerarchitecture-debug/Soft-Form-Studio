@@ -216,34 +216,31 @@ module Archinsights
         result
       end
 
-      # Signed winding of a closed loop (1 or -1). Uses the planar projection
-      # onto each coordinate plane summed for robustness.
+      # Signed winding of a closed loop: +1 or -1.
+      # Uses the doubled signed area of the projection onto the coordinate
+      # plane that carries the most area. This flips exactly on reversal,
+      # works for planar and near-planar loops, and never degenerates to
+      # zero on axes-aligned test geometry.
       def loop_winding(pts)
         return 1 if pts.size < 3
 
-        cx = 0.0; cy = 0.0; cz = 0.0
-        pts.each do |p|
-          cx += p.x; cy += p.y; cz += p.z
+        ax = 0.0; ay = 0.0; az = 0.0
+        n = pts.size
+        (0...n).each do |i|
+          a = pts[i]
+          b = pts[(i + 1) % n]
+          ax += a.y * b.z - a.z * b.y # projected area onto the YZ plane
+          ay += a.z * b.x - a.x * b.z # ... onto the ZX plane
+          az += a.x * b.y - a.y * b.x # ... onto the XY plane
         end
-        cx /= pts.size.to_f; cy /= pts.size.to_f; cz /= pts.size.to_f
-
-        sx = 0.0; sy = 0.0; sz = 0.0
-        (0...pts.size).each do |i|
-          vx = pts[i].x - cx
-          vy = pts[i].y - cy
-          vz = pts[i].z - cz
-          w = pts[(i + 1) % pts.size]
-          wx = w.x - cx
-          wy = w.y - cy
-          wz = w.z - cz
-          cx2 = vy * wz - vz * wy
-          cy2 = vz * wx - vx * wz
-          cz2 = vx * wy - vy * wx
-          sx += cx2 * vx # project onto axes-derived vectors
-          sy += cy2 * vy
-          sz += cz2 * vz
+        fx = ax.abs; fy = ay.abs; fz = az.abs
+        if fz >= fx && fz >= fy
+          az >= 0.0 ? 1 : -1
+        elsif fx >= fy
+          ax >= 0.0 ? 1 : -1
+        else
+          ay >= 0.0 ? 1 : -1
         end
-        (sx + sy + sz) >= 0.0 ? 1 : -1
       end
 
       # ------------------------------------------------------------------
