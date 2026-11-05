@@ -1,0 +1,21 @@
+# Plush - Soft Form Studio
+# These paths stay local-only and are never committed.
+
+# Private license tooling (minting valid keys - keep off any shared host)
+license_generator.html
+
+# Historical v1 archive
+_legacy_v1/
+
+# Local editor / tool artifacts
+.opencode/
+*.swp
+*~
+Thumbs.db
+Desktop.ini
+
+# OS junk
+.DS_Store
+
+# Test local logs
+tests/out/

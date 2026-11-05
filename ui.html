@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plush - Soft Form Studio</title>
+<link rel="stylesheet" href="ui.css">
+</head>
+<body>
+<div class="app">
+
+  <!-- ============ HEADER ============ -->
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 32 32" width="26" height="26"><defs><linearGradient id="bg1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e25689"/><stop offset="1" stop-color="#f2a25c"/></linearGradient></defs><path d="M16 3c3 0 4 1.2 7 1.2 4 0 5.8 2.4 5.8 5.6 0 2.4-1 3.4-1 6.2 0 2.8 1 4.2 1 6.6 0 3.2-2 5.6-5.8 5.6-3 0-4-1.2-7-1.2s-4 1.2-7 1.2c-3.8 0-5.8-2.4-5.8-5.6 0-2.4 1-3.8 1-6.6 0-2.8-1-3.8-1-6.2C1.2 6.6 3 4.2 7 4.2 10 4.2 13 3 16 3z" fill="url(#bg1)"/><path d="M10 14.5c2.5-2.8 9.5-2.8 12 0m-12 4.2c2.5-2.8 9.5-2.8 12 0" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/></svg>
+      </div>
+      <div class="brand-words">
+        <span class="brand-name">Plush</span>
+        <span class="brand-tag">soft form studio</span>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <div class="unit-seg" id="unit-seg" title="Workspace units">
+        <button type="button" data-unit="mm">mm</button>
+        <button type="button" data-unit="cm" class="on">cm</button>
+        <button type="button" data-unit="m">m</button>
+        <button type="button" data-unit="in">in</button>
+        <button type="button" data-unit="ft">ft</button>
+      </div>
+      <button type="button" id="unit-model" class="ghost-mini" title="Reset to the active model units">Auto</button>
+      <button type="button" id="btn-collapse" class="icon-btn" onclick="toggleMinimize()" title="Roll the window down while you work in the viewport">
+        <svg viewBox="0 0 24 24" width="18" height="18"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M5 12h14"/></svg>
+      </button>
+      <button type="button" id="btn-max" class="icon-btn" onclick="toggleMaximize()" title="Grow the window">
+        <svg viewBox="0 0 24 24" width="18" height="18"><rect x="5" y="5" width="14" height="14" rx="3" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+      </button>
+      <button type="button" id="btn-update" class="icon-btn" onclick="openUpdates()" title="Updates">
+        <svg viewBox="0 0 24 24" width="18" height="18"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M10.3 21a2 2 0 0 0 3.4 0"/><circle id="update-dot" cx="17.5" cy="5.5" r="3.2" fill="#e25689" style="display:none"/></svg>
+      </button>
+      <button type="button" id="btn-profile" class="profile-btn" onclick="openProfile()" title="License & Profile">
+        <svg viewBox="0 0 24 24" width="18" height="18"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" d="M20 21a8 8 0 1 0-16 0M12 13a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- ============ UPDATE BANNER ============ -->
+  <div id="update-banner" class="update-banner" style="display:none">
+    <div class="ub-icon">
+      <svg viewBox="0 0 24 24" width="20" height="20"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 1 1-9-9m9 0v5h-5M21 3l-6 6"/></svg>
+    </div>
+    <div class="ub-body">
+      <strong id="ub-title">A softer update is ready</strong>
+      <span id="ub-notes">Notes will appear here.</span>
+    </div>
+    <div class="ub-actions">
+      <button type="button" class="btn-tiny primary" onclick="downloadUpdate()">Get it</button>
+      <button type="button" class="btn-tiny" onclick="dismissUpdate()">Later</button>
+    </div>
+  </div>
+  <div id="update-downloaded" class="update-banner downloaded" style="display:none">
+    <div class="ub-icon">
+      <svg viewBox="0 0 24 24" width="20" height="20"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+    </div>
+    <div class="ub-body">
+      <strong id="ud-title">Package saved</strong>
+      <span id="ud-path">Ready to run.</span>
+    </div>
+    <div class="ub-actions">
+      <button type="button" class="btn-tiny primary" onclick="runInstaller()">Install</button>
+    </div>
+  </div>
+
+  <!-- ============ BODY ============ -->
+  <div class="body-row">
+
+    <!-- ~~~~~~ RAIL ~~~~~~ -->
+    <nav class="rail" id="rail">
+      <button type="button" class="rail-item on" data-tool="corners" title="Soften Corners">
+        <svg viewBox="0 0 24 24" width="21" height="21"><path fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" d="M4 20V10a6 6 0 0 1 6-6h10"/><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-dasharray="2.6 2.6" stroke-linecap="round" d="M4 20h9a7 7 0 0 0 7-7v-2"/></svg>
+        <span class="rail-dot"></span>
+      </button>
+      <button type="button" class="rail-item" data-tool="pillow" title="Pillow Maker">
+        <svg viewBox="0 0 24 24" width="21" height="21"><path fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round" d="M4.5 9.5C4.5 6 7 4.5 12 4.5S19.5 6 19.5 9.5s-2 2.5-2 5-2.5 5-5.5 5-5.5-2.5-5.5-5-2-1.5-2-5z"/><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" d="M8.5 9.5C10 8 14 8 15.5 9.5M8.5 14.5c1.5 1.5 5.5 1.5 7 0"/></svg>
+        <span class="rail-dot"></span>
+      </button>
+      <button type="button" class="rail-item" data-tool="mattress" title="Mattress Maker">
+        <svg viewBox="0 0 24 24" width="21" height="21"><path fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round" d="M3 8c0-2 1-3 3-3h12c2 0 3 1 3 3v9c0 1.5-1 3-3 3H6c-2 0-3-1.5-3-3V8z"/><path fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" d="M6.5 12h11M6.5 15h6"/></svg>
+        <span class="rail-dot"></span>
+      </button>
+      <button type="button" class="rail-item" data-tool="cushion" title="Cushion Maker">
+        <svg viewBox="0 0 24 24" width="21" height="21"><path fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round" d="M5 9c0-2.2 1.6-4 4-4h6c2.4 0 4 1.8 4 4v6c0 2.2-1.6 4-4 4H9c-2.4 0-4-1.8-4-4V9z"/><path fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-dasharray="1.8 2.2" d="M8 12.5h8"/></svg>
+        <span class="rail-dot"></span>
+      </button>
+      <button type="button" class="rail-item" data-tool="drape" title="Fabric Drape">
+        <svg viewBox="0 0 24 24" width="21" height="21"><path fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" d="M4 4.5h16l-1.5 4H6.5L4 4.5z"/><path fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" d="M7 9.5c0 4.5-1 7-1 10 2-1.4 3.4-4.6 3.6-8.5C11.2 13.6 12 15 12 19.5c1-3.5 2.4-6 3.4-8.5.4 3.9 1.6 7.1 3.6 8.5 0-3-1-5.5-1-10"/></svg>
+        <span class="rail-dot"></span>
+      </button>
+      <button type="button" class="rail-item" data-tool="wall_curve" title="Curved Wall">
+        <svg viewBox="0 0 24 24" width="21" height="21"><path fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" d="M4 19h3V5.5M20 19h-3V5.5"/><path fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" d="M7 12c3.5-5 7 5 10 0"/></svg>
+        <span class="rail-dot"></span>
+      </button>
+      <button type="button" class="rail-item" data-tool="ceiling_curve" title="Ceiling Curve">
+        <svg viewBox="0 0 24 24" width="21" height="21"><path fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" d="M4 5h16M4 5v3.5M20 5v3.5"/><path fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" d="M4 8.5c0 5 4 8.5 8 8.5s8-3.5 8-8.5"/></svg>
+        <span class="rail-dot"></span>
+      </button>
+      <button type="button" class="rail-item" data-tool="curved_pushpull" title="Curved Push/Pull">
+        <svg viewBox="0 0 24 24" width="21" height="21"><path fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" d="M8 3.5H4.5v4M15.5 3.5H19.5v4M4.5 7.5l4-4M19.5 7.5l-4-4"/><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" d="M6 13.5c4-4.5 8 4.5 12 0"/><path fill="currentColor" d="M6 20l-2.2-3h4.4L6 20zM18 20l-2.2-3h4.4L18 20z"/></svg>
+        <span class="rail-dot"></span>
+      </button>
+      <button type="button" class="rail-item" data-tool="cutout" title="Openings">
+        <svg viewBox="0 0 24 24" width="21" height="21"><rect x="4" y="4" width="16" height="16" rx="3.5" fill="none" stroke="currentColor" stroke-width="1.9"/><rect x="9.2" y="9.2" width="5.6" height="5.6" rx="1.4" fill="currentColor"/></svg>
+        <span class="rail-dot"></span>
+      </button>
+      <button type="button" class="rail-item" data-tool="loft" title="Loft Surface">
+        <svg viewBox="0 0 24 24" width="21" height="21"><ellipse cx="12" cy="16.8" rx="7.5" ry="3.3" fill="none" stroke="currentColor" stroke-width="1.9"/><ellipse cx="12" cy="8.2" rx="4" ry="2" fill="none" stroke="currentColor" stroke-width="1.9"/><path fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" d="M5 16c1.6-4.5 3-6 3.5-6.5M19 16c-1.6-4.5-3-6-3.5-6.5"/></svg>
+        <span class="rail-dot"></span>
+      </button>
+      <button type="button" class="rail-item" data-tool="pipe" title="Pipe &amp; Tube">
+        <svg viewBox="0 0 24 24" width="21" height="21"><ellipse cx="8" cy="12" rx="3.4" ry="5" fill="none" stroke="currentColor" stroke-width="1.9"/><ellipse cx="8" cy="12" rx="1.5" ry="2.6" fill="none" stroke="currentColor" stroke-width="1.5"/><path fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" d="M8 7h9.2c2 0 3.3 2.2 3.3 5s-1.3 5-3.3 5H8"/></svg>
+        <span class="rail-dot"></span>
+      </button>
+      <button type="button" class="rail-item" data-tool="utilities" title="Utilities">
+        <svg viewBox="0 0 24 24" width="21" height="21"><path fill="currentColor" d="M13.2 2.4l1.1 2.9 2.9 1.1-2.9 1.1-1.1 2.9-1.1-2.9-2.9-1.1 2.9-1.1 1.1-2.9zM6.5 12l.8 2 2 .8-2 .8-.8 2-.8-2-2-.8 2-.8.8-2zM17 15l.7 1.8 1.8.7-1.8.7-.7 1.8-.7-1.8-1.8-.7 1.8-.7.7-1.8z"/></svg>
+        <span class="rail-dot"></span>
+      </button>
+    </nav>
+
+    <!-- ~~~~~~ CONTENT ~~~~~~ -->
+    <main class="content">
+      <div id="status-card" class="status-card checking">
+        <span class="orb"></span>
+        <span id="status-message">Reading the model...</span>
+      </div>
+
+      <!-- ================= CORNERS ================= -->
+      <section id="panel-corners" class="panel on">
+        <div class="panel-head">
+          <h2>Soften Corners</h2>
+          <p>Round the corners of any extruded face with fabric-smooth arcs.</p>
+        </div>
+        <div class="card">
+          <div class="chips" id="corner-mode">
+            <button type="button" class="chip on" data-mode="auto">Auto Soften</button>
+            <button type="button" class="chip" data-mode="manual">Manual Radius</button>
+          </div>
+          <div id="corner-manual" class="input-row" style="display:none">
+            <label class="lab" for="in-corners-radius">Curvature radius</label>
+            <div class="len-input"><input id="in-corners-radius" type="text" inputmode="decimal" value="50"><span class="unit-chip" data-unit-for="in-corners-radius">cm</span></div>
+          </div>
+          <div class="hint">Auto picks the safest radius per corner. Manual clamps to what fits; suffixes like <b>2in</b> always win.</div>
+        </div>
+      </section>
+
+      <!-- ================= PILLOW ================= -->
+      <section id="panel-pillow" class="panel">
+        <div class="panel-head">
+          <h2>Pillow Maker</h2>
+          <p>Dense cloth mesh with seam piping, catenary sag and unique wrinkles.</p>
+        </div>
+        <div class="card">
+          <div class="chips" id="pillow-form">
+            <button type="button" class="chip on" data-form="sofa">Sofa</button>
+            <button type="button" class="chip" data-form="euro">Euro</button>
+            <button type="button" class="chip" data-form="body">Body</button>
+          </div>
+          <div class="input-row">
+            <label class="lab" for="in-pillow-height">Pillow height</label>
+            <div class="len-input"><input id="in-pillow-height" type="text" inputmode="decimal" value="15"><span class="unit-chip" data-unit-for="in-pillow-height">cm</span></div>
+          </div>
+          <button type="button" class="dice" id="pillow-dice" title="New fabric seed - every press weaves a different pillow">
+            <svg viewBox="0 0 24 24" width="15" height="15"><rect x="3.5" y="3.5" width="17" height="17" rx="4" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="8.6" cy="8.6" r="1.5" fill="currentColor"/><circle cx="15.4" cy="15.4" r="1.5" fill="currentColor"/><circle cx="15.4" cy="8.6" r="1.5" fill="currentColor"/><circle cx="8.6" cy="15.4" r="1.5" fill="currentColor"/></svg>
+            <span id="pillow-seed-label">seed 1</span>
+          </button>
+          <div class="toggles">
+            <label class="switch"><input type="checkbox" id="in-pillow-rest" checked><span class="track"></span><span class="sw-label">Rest on surface</span></label>
+            <label class="switch"><input type="checkbox" id="in-pillow-piping" checked><span class="track"></span><span class="sw-label">Seam piping</span></label>
+          </div>
+          <div class="hint">The click-tool stays armed whenever this tab is open - survey heights in the dialog, then click faces directly in the viewport.</div>
+        </div>
+        <div class="card">
+          <div class="slider-row"><span class="lab">Drape sag</span><input type="range" id="in-pillow-drape" min="0" max="100" value="45"><b class="sval" id="v-pillow-drape">45</b></div>
+          <div class="slider-row"><span class="lab">Puff</span><input type="range" id="in-pillow-puff" min="20" max="100" value="72"><b class="sval" id="v-pillow-puff">72</b></div>
+          <div class="slider-row"><span class="lab">Wrinkle</span><input type="range" id="in-pillow-wrinkle" min="0" max="100" value="55"><b class="sval" id="v-pillow-wrinkle">55</b></div>
+          <div class="slider-row"><span class="lab">Mesh detail</span><input type="range" id="in-pillow-detail" min="4" max="10" value="7"><b class="sval" id="v-pillow-detail">7</b></div>
+        </div>
+        <div class="card swatches" data-swatch-group="pillow" data-default="#e9c8c2">
+          <span class="lab">Fabric</span>
+          <div class="dots"><button type="button" class="dot on" data-color="#e9c8c2" style="background:#e9c8c2"></button><button type="button" class="dot" data-color="#d9c6f2" style="background:#d9c6f2"></button><button type="button" class="dot" data-color="#f4d8a8" style="background:#f4d8a8"></button><button type="button" class="dot" data-color="#b7d8d2" style="background:#b7d8d2"></button><button type="button" class="dot" data-color="#a8c4ee" style="background:#a8c4ee"></button><button type="button" class="dot none" data-color="" title="No material">✕</button></div>
+        </div>
+      </section>
+
+      <!-- ================= MATTRESS ================= -->
+      <section id="panel-mattress" class="panel">
+        <div class="panel-head">
+          <h2>Mattress Maker</h2>
+          <p>Piping, quilt patterns and tufting buttons - fully metric &amp; imperial.</p>
+        </div>
+        <div class="card">
+          <div class="chips" id="mattress-style">
+            <button type="button" class="chip on" data-style="classic">Classic</button>
+            <button type="button" class="chip" data-style="pillowtop">Pillow-Top</button>
+            <button type="button" class="chip" data-style="euro">Euro-Top</button>
+          </div>
+          <div class="input-row">
+            <label class="lab" for="in-mattress-thickness">Thickness</label>
+            <div class="len-input"><input id="in-mattress-thickness" type="text" inputmode="decimal" value="25"><span class="unit-chip" data-unit-for="in-mattress-thickness">cm</span></div>
+          </div>
+          <div class="sub-label">Quilt pattern</div>
+          <div class="chips" id="mattress-pattern">
+            <button type="button" class="chip" data-pattern="none">None</button>
+            <button type="button" class="chip on" data-pattern="grid">Grid</button>
+            <button type="button" class="chip" data-pattern="diamond">Diamond</button>
+            <button type="button" class="chip" data-pattern="waves">Waves</button>
+          </div>
+          <div class="toggles">
+            <label class="switch"><input type="checkbox" id="in-mattress-tuft"><span class="track"></span><span class="sw-label">Tufting buttons</span></label>
+          </div>
+          <div class="slider-row"><span class="lab">Side bulge</span><input type="range" id="in-mattress-bulge" min="0" max="100" value="45"><b class="sval" id="v-mattress-bulge">45</b></div>
+          <div class="hint">Quilt patterns fill rectangular plan faces - other shapes get a smooth plush cap.</div>
+        </div>
+        <div class="card swatches" data-swatch-group="mattress" data-default="#dfeef0">
+          <span class="lab">Fabric</span>
+          <div class="dots"><button type="button" class="dot on" data-color="#dfeef0" style="background:#dfeef0"></button><button type="button" class="dot" data-color="#f2d9dc" style="background:#f2d9dc"></button><button type="button" class="dot" data-color="#c5e0cf" style="background:#c5e0cf"></button><button type="button" class="dot" data-color="#cdd3e8" style="background:#cdd3e8"></button><button type="button" class="dot" data-color="#e8d8c5" style="background:#e8d8c5"></button><button type="button" class="dot none" data-color="" title="No material">✕</button></div>
+        </div>
+      </section>
+
+      <!-- ================= CUSHION ================= -->
+      <section id="panel-cushion" class="panel">
+        <div class="panel-head">
+          <h2>Cushion Maker</h2>
+          <p>Boxy seat cushions with welt piping and top stitching.</p>
+        </div>
+        <div class="card">
+          <div class="input-row">
+            <label class="lab" for="in-cushion-height">Cushion thickness</label>
+            <div class="len-input"><input id="in-cushion-height" type="text" inputmode="decimal" value="12"><span class="unit-chip" data-unit-for="in-cushion-height">cm</span></div>
+          </div>
+          <div class="toggles">
+            <label class="switch"><input type="checkbox" id="in-cushion-rest" checked><span class="track"></span><span class="sw-label">Rest on surface</span></label>
+          </div>
+          <div class="slider-row"><span class="lab">Wrinkle</span><input type="range" id="in-cushion-wrinkle" min="0" max="100" value="30"><b class="sval" id="v-cushion-wrinkle">30</b></div>
+          <div class="slider-row"><span class="lab">Mesh detail</span><input type="range" id="in-cushion-detail" min="4" max="10" value="6"><b class="sval" id="v-cushion-detail">6</b></div>
+          <button type="button" class="dice" id="cushion-dice" title="New fabric seed"><svg viewBox="0 0 24 24" width="15" height="15"><rect x="3.5" y="3.5" width="17" height="17" rx="4" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="8.6" cy="8.6" r="1.5" fill="currentColor"/><circle cx="15.4" cy="15.4" r="1.5" fill="currentColor"/><circle cx="15.4" cy="8.6" r="1.5" fill="currentColor"/><circle cx="8.6" cy="15.4" r="1.5" fill="currentColor"/></svg><span id="cushion-seed-label">seed 11</span></button>
+        </div>
+        <div class="card swatches" data-swatch-group="cushion" data-default="#cdd9e8">
+          <span class="lab">Fabric</span>
+          <div class="dots"><button type="button" class="dot on" data-color="#cdd9e8" style="background:#cdd9e8"></button><button type="button" class="dot" data-color="#e3c9b4" style="background:#e3c9b4"></button><button type="button" class="dot" data-color="#d5e3c9" style="background:#d5e3c9"></button><button type="button" class="dot none" data-color="" title="No material">✕</button></div>
+        </div>
+      </section>
+
+      <!-- ================= DRAPE ================= -->
+      <section id="panel-drape" class="panel">
+        <div class="panel-head">
+          <h2>Fabric Drape</h2>
+          <p>Skirts of cloth falling over table and bed edges with flared hems.</p>
+        </div>
+        <div class="card">
+          <div class="input-row">
+            <label class="lab" for="in-drape-drop">Fall drop</label>
+            <div class="len-input"><input id="in-drape-drop" type="text" inputmode="decimal" value="30"><span class="unit-chip" data-unit-for="in-drape-drop">cm</span></div>
+          </div>
+          <div class="slider-row"><span class="lab">Hem flare</span><input type="range" id="in-drape-flare" min="0" max="100" value="50"><b class="sval" id="v-drape-flare">50</b></div>
+          <div class="slider-row"><span class="lab">Wrinkle</span><input type="range" id="in-drape-wrinkle" min="0" max="100" value="40"><b class="sval" id="v-drape-wrinkle">40</b></div>
+          <div class="slider-row"><span class="lab">Mesh detail</span><input type="range" id="in-drape-detail" min="4" max="10" value="6"><b class="sval" id="v-drape-detail">6</b></div>
+          <button type="button" class="dice" id="drape-dice" title="New cloth seed"><svg viewBox="0 0 24 24" width="15" height="15"><rect x="3.5" y="3.5" width="17" height="17" rx="4" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="8.6" cy="8.6" r="1.5" fill="currentColor"/><circle cx="15.4" cy="15.4" r="1.5" fill="currentColor"/><circle cx="15.4" cy="8.6" r="1.5" fill="currentColor"/><circle cx="8.6" cy="15.4" r="1.5" fill="currentColor"/></svg><span id="drape-seed-label">seed 21</span></button>
+          <div class="hint">Your base face stays untouched - only the hanging skirt appears around it. Corners hang slightly lower, just like real cloth.</div>
+        </div>
+        <div class="card swatches" data-swatch-group="drape" data-default="#c9d7c5">
+          <span class="lab">Fabric</span>
+          <div class="dots"><button type="button" class="dot on" data-color="#c9d7c5" style="background:#c9d7c5"></button><button type="button" class="dot" data-color="#e9c8c2" style="background:#e9c8c2"></button><button type="button" class="dot" data-color="#a8c4ee" style="background:#a8c4ee"></button><button type="button" class="dot none" data-color="" title="No material">✕</button></div>
+        </div>
+      </section>
+
+      <!-- ================= WALL CURVE ================= -->
+      <section id="panel-wall_curve" class="panel">
+        <div class="panel-head">
+          <h2>Curved Wall</h2>
+          <p>Sweep organic bulges, S-curves or waves along edges or a floor plan.</p>
+        </div>
+        <div class="card">
+          <div class="chips" id="wall-style">
+            <button type="button" class="chip on" data-style="bulge">Bulge</button>
+            <button type="button" class="chip" data-style="s">S-Curve</button>
+            <button type="button" class="chip" data-style="wave">Waves</button>
+          </div>
+          <div class="input-row two">
+            <div><label class="lab" for="in-wall-height">Height</label><div class="len-input"><input id="in-wall-height" type="text" inputmode="decimal" value="240"><span class="unit-chip" data-unit-for="in-wall-height">cm</span></div></div>
+            <div><label class="lab" for="in-wall-amp">Swing</label><div class="len-input"><input id="in-wall-amp" type="text" inputmode="decimal" value="30"><span class="unit-chip" data-unit-for="in-wall-amp">cm</span></div></div>
+          </div>
+          <div id="wall-waves-row" class="input-row" style="display:none">
+            <label class="lab" for="in-wall-waves">Wave count</label>
+            <div class="len-input"><input id="in-wall-waves" type="text" inputmode="numeric" value="2"><span class="unit-chip">waves</span></div>
+          </div>
+          <div class="slider-row"><span class="lab">Wrinkle</span><input type="range" id="in-wall-wrinkle" min="0" max="100" value="15"><b class="sval" id="v-wall-wrinkle">15</b></div>
+          <div class="slider-row"><span class="lab">Mesh detail</span><input type="range" id="in-wall-detail" min="3" max="10" value="6"><b class="sval" id="v-wall-detail">6</b></div>
+          <button type="button" class="dice" id="wall-dice" title="New variation"><svg viewBox="0 0 24 24" width="15" height="15"><rect x="3.5" y="3.5" width="17" height="17" rx="4" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="8.6" cy="8.6" r="1.5" fill="currentColor"/><circle cx="15.4" cy="15.4" r="1.5" fill="currentColor"/><circle cx="15.4" cy="8.6" r="1.5" fill="currentColor"/><circle cx="8.6" cy="15.4" r="1.5" fill="currentColor"/></svg><span id="wall-seed-label">seed 3</span></button>
+          <div class="hint">Select a floor-plan face for a closed room divider, or chain edges for a partition path. The wall leans toward the face centre.</div>
+        </div>
+      </section>
+
+      <!-- ================= CEILING CURVE ================= -->
+      <section id="panel-ceiling_curve" class="panel">
+        <div class="panel-head">
+          <h2>Ceiling Curve</h2>
+          <p>Cove, crown and scallop fillets where ceilings meet walls.</p>
+        </div>
+        <div class="card">
+          <div class="chips" id="ceiling-style">
+            <button type="button" class="chip on" data-style="cove">Cove</button>
+            <button type="button" class="chip" data-style="crown">Crown</button>
+            <button type="button" class="chip" data-style="scallop">Scallop</button>
+          </div>
+          <div class="input-row two">
+            <div><label class="lab" for="in-ceiling-radius">Radius</label><div class="len-input"><input id="in-ceiling-radius" type="text" inputmode="decimal" value="15"><span class="unit-chip" data-unit-for="in-ceiling-radius">cm</span></div></div>
+            <div><label class="lab" for="in-ceiling-segments">Segments</label><div class="len-input"><input id="in-ceiling-segments" type="text" inputmode="numeric" value="9"><span class="unit-chip">seg</span></div></div>
+          </div>
+          <div class="hint">Select the ceiling face whose edges touch the walls. Cove arches concavely, Crown rolls convexly, Scallop undulates along its length.</div>
+        </div>
+      </section>
+
+      <!-- ================= PUSH/PULL ================= -->
+      <section id="panel-curved_pushpull" class="panel">
+        <div class="panel-head">
+          <h2>Curved Push/Pull</h2>
+          <p>Extrude curved surfaces the native Push/Pull cannot touch.</p>
+        </div>
+        <div class="card">
+          <div class="input-row">
+            <label class="lab" for="in-pushpull-distance">Distance</label>
+            <div class="len-input"><input id="in-pushpull-distance" type="text" inputmode="decimal" value="50"><span class="unit-chip" data-unit-for="in-pushpull-distance">cm</span></div>
+          </div>
+          <div class="chips" id="pushpull-mode">
+            <button type="button" class="chip on" data-mode="normal">Follow normals</button>
+            <button type="button" class="chip" data-mode="unified">Unified direction</button>
+          </div>
+          <div class="hint">Negative values press inward, positive values pull outward.</div>
+        </div>
+      </section>
+
+      <!-- ================= OPENINGS ================= -->
+      <section id="panel-cutout" class="panel">
+        <div class="panel-head">
+          <h2>Openings</h2>
+          <p>Cut window and punctuation openings clean through panels.</p>
+        </div>
+        <div class="card">
+          <div class="chips" id="cutout-shape">
+            <button type="button" class="chip on" data-shape="rect">Rectangle</button>
+            <button type="button" class="chip" data-shape="circle">Circle</button>
+          </div>
+          <div class="input-row two" id="cutout-rect-row">
+            <div><label class="lab" for="in-cutout-width">Width</label><div class="len-input"><input id="in-cutout-width" type="text" inputmode="decimal" value="100"><span class="unit-chip" data-unit-for="in-cutout-width">cm</span></div></div>
+            <div><label class="lab" for="in-cutout-height">Height</label><div class="len-input"><input id="in-cutout-height" type="text" inputmode="decimal" value="50"><span class="unit-chip" data-unit-for="in-cutout-height">cm</span></div></div>
+          </div>
+          <div class="input-row" id="cutout-circle-row" style="display:none">
+            <label class="lab" for="in-cutout-diameter">Diameter</label>
+            <div class="len-input"><input id="in-cutout-diameter" type="text" inputmode="decimal" value="100"><span class="unit-chip" data-unit-for="in-cutout-diameter">cm</span></div>
+          </div>
+          <div class="input-row two">
+            <div><label class="lab" for="in-cutout-offx">Offset U</label><div class="len-input"><input id="in-cutout-offx" type="text" inputmode="decimal" value="0"><span class="unit-chip" data-unit-for="in-cutout-offx">cm</span></div></div>
+            <div><label class="lab" for="in-cutout-offy">Offset V</label><div class="len-input"><input id="in-cutout-offy" type="text" inputmode="decimal" value="0"><span class="unit-chip" data-unit-for="in-cutout-offy">cm</span></div></div>
+          </div>
+          <div class="input-row">
+            <label class="lab" for="in-cutout-depth">Depth (0 = auto)</label>
+            <div class="len-input"><input id="in-cutout-depth" type="text" inputmode="decimal" value="0"><span class="unit-chip" data-unit-for="in-cutout-depth">cm</span></div>
+          </div>
+          <div class="toggles">
+            <label class="switch"><input type="checkbox" id="in-cutout-rounded" checked><span class="track"></span><span class="sw-label">Soft corners</span></label>
+          </div>
+          <div class="hint">Depth 0 auto-sizes to a quarter of the face span. Offsets measure from the face centre along its two axes.</div>
+        </div>
+      </section>
+
+      <!-- ================= LOFT ================= -->
+      <section id="panel-loft" class="panel">
+        <div class="panel-head">
+          <h2>Loft Surface</h2>
+          <p>Ruled or eased surfaces between two closed edge loops.</p>
+        </div>
+        <div class="card">
+          <div class="input-row">
+            <label class="lab" for="in-loft-segments">Segments</label>
+            <div class="len-input"><input id="in-loft-segments" type="text" inputmode="numeric" value="8"><span class="unit-chip">seg</span></div>
+          </div>
+          <div class="chips" id="loft-style">
+            <button type="button" class="chip on" data-style="ruled">Ruled</button>
+            <button type="button" class="chip" data-style="smooth">Smooth ease</button>
+          </div>
+          <div class="toggles">
+            <label class="switch"><input type="checkbox" id="in-loft-capstart" checked><span class="track"></span><span class="sw-label">Cap start</span></label>
+            <label class="switch"><input type="checkbox" id="in-loft-capend" checked><span class="track"></span><span class="sw-label">Cap end</span></label>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= PIPE ================= -->
+      <section id="panel-pipe" class="panel">
+        <div class="panel-head">
+          <h2>Pipe &amp; Tube</h2>
+          <p>Sweep a solid or hollow tube along any chain of edges.</p>
+        </div>
+        <div class="card">
+          <div class="input-row two">
+            <div><label class="lab" for="in-pipe-outer">Outer Ø</label><div class="len-input"><input id="in-pipe-outer" type="text" inputmode="decimal" value="20"><span class="unit-chip" data-unit-for="in-pipe-outer">cm</span></div></div>
+            <div><label class="lab" for="in-pipe-inner">Inner Ø</label><div class="len-input"><input id="in-pipe-inner" type="text" inputmode="decimal" value="0"><span class="unit-chip" data-unit-for="in-pipe-inner">cm</span></div></div>
+          </div>
+          <div class="input-row">
+            <label class="lab" for="in-pipe-sides">Roundness</label>
+            <div class="len-input"><input id="in-pipe-sides" type="text" inputmode="numeric" value="24"><span class="unit-chip">sides</span></div>
+          </div>
+          <div class="sub-label">End caps</div>
+          <div class="chips" id="pipe-caps">
+            <button type="button" class="chip on" data-caps="none">Open</button>
+            <button type="button" class="chip" data-caps="start">Start</button>
+            <button type="button" class="chip" data-caps="end">End</button>
+            <button type="button" class="chip" data-caps="both">Both</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= UTILITIES ================= -->
+      <section id="panel-utilities" class="panel">
+        <div class="panel-head">
+          <h2>Utilities</h2>
+          <p>One-tap finishing passes for the whole selection.</p>
+        </div>
+        <div class="card">
+          <button type="button" class="utility-btn" onclick="applyAction('apply_soften_all')">Soften every edge in selection</button>
+          <button type="button" class="utility-btn" onclick="applyAction('apply_harden_all')">Harden every edge</button>
+        </div>
+        <div class="card">
+          <div class="sub-label">Batch soften corners</div>
+          <div class="chips" id="batch-mode">
+            <button type="button" class="chip on" data-mode="auto">Auto radius</button>
+            <button type="button" class="chip" data-mode="manual">Fixed radius</button>
+          </div>
+          <div id="batch-manual" class="input-row" style="display:none">
+            <label class="lab" for="in-batch-radius">Radius</label>
+            <div class="len-input"><input id="in-batch-radius" type="text" inputmode="decimal" value="50"><span class="unit-chip" data-unit-for="in-batch-radius">cm</span></div>
+          </div>
+          <button type="button" class="utility-btn primary" onclick="applyBatch()">Run on selection</button>
+          <div class="hint">Softening runs inside each selected group too - great for furniture batches.</div>
+        </div>
+        <div class="card">
+          <div class="sub-label">Version</div>
+          <div class="hint" id="about-version">Plush 2.0.0 by ArchInsights</div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="foot">
+    <button type="button" class="btn ghost" onclick="closeDialog()">Close</button>
+    <button type="button" id="btn-apply" class="btn primary">Soften Corners</button>
+  </footer>
+</div>
+
+<!-- ============ LICENSE / PROFILE / UPDATES MODAL ============ -->
+<div id="profile-modal" class="modal-overlay">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="rail-tabs">
+        <button type="button" class="mtab on" data-mtab="license">License</button>
+        <button type="button" class="mtab" data-mtab="updates">Updates</button>
+        <button type="button" class="mtab" data-mtab="about">About</button>
+      </div>
+      <button type="button" class="x" onclick="closeProfile()">&times;</button>
+    </div>
+
+    <div class="modal-body">
+      <!-- LICENSE -->
+      <div id="mtab-license" class="mtab-body on">
+        <div id="lic-active" style="display:none">
+          <div class="lic-hero ok"><span class="lic-status">Active</span><span class="lic-kind" id="lic-kind">Commercial</span></div>
+          <div class="kv"><span>Email</span><b id="lic-email">-</b></div>
+          <div class="kv"><span>Activated</span><b id="lic-reg">-</b></div>
+          <div class="kv"><span>Expires</span><b id="lic-exp">-</b></div>
+          <button type="button" class="btn danger full" onclick="removeLicense()">Remove license</button>
+        </div>
+        <div id="lic-inactive" style="display:none">
+          <p class="modal-note">Activate to unlock the full studio. Paste the details from your purchase.</p>
+          <div class="input-modal"><label>Email</label><input id="act-email" type="email" placeholder="you@studio.com"></div>
+          <div class="input-modal"><label>License key</label><input id="act-key" type="text" placeholder="YYYYMMDD-XXXX-XXXX-XXXX"></div>
+          <div class="input-modal"><label>Machine ID</label><input id="act-hwid" type="text" readonly></div>
+          <button type="button" id="btn-activate" class="btn primary full" onclick="submitActivation()">Activate</button>
+        </div>
+      </div>
+
+      <!-- UPDATES -->
+      <div id="mtab-updates" class="mtab-body">
+        <div class="kv"><span>Current version</span><b id="upd-current">2.0.0</b></div>
+        <div class="kv"><span>Newest known</span><b id="upd-remote">-</b></div>
+        <div class="kv"><span>Last check</span><b id="upd-last">never</b></div>
+        <label class="switch big"><input type="checkbox" id="upd-auto" checked onchange="saveUpdatePrefs()"><span class="track"></span><span class="sw-label">Check in the background while SketchUp runs</span></label>
+        <div class="input-modal"><label>Release feed (advanced)</label><input id="upd-feed" type="text" placeholder="https://updates.archinsights.com/plush/release.json"></div>
+        <div class="row-btns">
+          <button type="button" class="btn primary" onclick="checkNow()">Check now</button>
+          <button type="button" class="btn ghost" onclick="saveUpdatePrefs(true)">Save feed</button>
+        </div>
+        <div id="upd-result" class="hint"></div>
+      </div>
+
+      <!-- ABOUT -->
+      <div id="mtab-about" class="mtab-body">
+        <div class="about-hero">
+          <div class="about-mark">
+            <svg viewBox="0 0 32 32" width="42" height="42"><path d="M16 3c3 0 4 1.2 7 1.2 4 0 5.8 2.4 5.8 5.6 0 2.4-1 3.4-1 6.2 0 2.8 1 4.2 1 6.6 0 3.2-2 5.6-5.8 5.6-3 0-4-1.2-7-1.2s-4 1.2-7 1.2c-3.8 0-5.8-2.4-5.8-5.6 0-2.4 1-3.8 1-6.6 0-2.8-1-3.8-1-6.2C1.2 6.6 3 4.2 7 4.2 10 4.2 13 3 16 3z" fill="#e25689" opacity=".92"/></svg>
+          </div>
+          <h3>Plush <span class="ver" id="about-version-badge">2.0.0</span></h3>
+          <p>Soft form studio for interior storytelling.<br>Designed &amp; built by ArchInsights.</p>
+        </div>
+        <div class="kv"><span>Suite</span><b id="env-sketchup">-</b></div>
+        <div class="kv"><span>Engine</span><b id="env-ruby">-</b></div>
+        <div class="kv"><span>Model units</span><b id="env-units">-</b></div>
+        <div class="hint">Every generated object is named Plush-* so it is trivial to find, tag and texture later.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toast" role="status"></div>
+
+<script src="ui.js"></script>
+</body>
+</html>

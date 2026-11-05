@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 340" width="640" height="340" role="img" aria-label="How Plush builds a pillow: seam refinement, piping crest, rings to a flat cap">
+  <defs>
+    <linearGradient id="fill" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fff2e6"/>
+      <stop offset="1" stop-color="#ffd3df"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="640" height="340" rx="18" fill="#2a2427"/>
+
+  <!-- caption -->
+  <text x="24" y="36" font-family="Segoe UI" font-size="17" font-weight="700" fill="#fff6ec">Anatomy of a Plush pillow</text>
+
+  <!-- boundary refinement -->
+  <g transform="translate(40,80)">
+    <text x="0" y="70" font-family="Segoe UI" font-size="13" fill="#c9b8ae">1 · catenary seam</text>
+    <path d="M10 40 C 30 52, 90 52, 110 40" fill="none" stroke="#e25689" stroke-width="3"/>
+    <circle cx="10" cy="40" r="3.4" fill="#f2a25c"/>
+    <circle cx="110" cy="40" r="3.4" fill="#f2a25c"/>
+  </g>
+
+  <!-- piping crest -->
+  <g transform="translate(230,80)">
+    <text x="0" y="70" font-family="Segoe UI" font-size="13" fill="#c9b8ae">2 · piping crest</text>
+    <ellipse cx="60" cy="40" rx="56" ry="14" fill="none" stroke="#f2a25c" stroke-width="4"/>
+  </g>
+
+  <!-- dome stack -->
+  <g transform="translate(420,80)">
+    <text x="6" y="70" font-family="Segoe UI" font-size="13" fill="#c9b8ae">3 · rings → flat cap</text>
+    <ellipse cx="66" cy="52" rx="60" ry="16" fill="none" stroke="#e25689" stroke-width="2.4"/>
+    <ellipse cx="66" cy="40" rx="48" ry="13" fill="none" stroke="#e25689" stroke-width="2.2"/>
+    <ellipse cx="66" cy="30" rx="36" ry="10" fill="none" stroke="#e25689" stroke-width="2"/>
+    <ellipse cx="66" cy="21" rx="24" ry="7" fill="none" stroke="#e25689" stroke-width="1.8"/>
+    <ellipse cx="66" cy="14" rx="10" ry="4" fill="none" stroke="#e25689" stroke-width="1.6"/>
+  </g>
+
+  <!-- finished pillow -->
+  <g transform="translate(96,170)">
+    <path d="M0 120 C 0 48, 40 16, 100 12 C 150 8, 210 4, 260 22 C 320 44, 360 86, 344 128 C 330 162, 280 180, 220 176 C 150 170, 60 172, 28 158 C 6 148, 0 136, 0 120 Z" fill="url(#fill)"/>
+    <path d="M60 40 C 120 18, 240 20, 300 46" fill="none" stroke="#e25689" stroke-width="5" stroke-linecap="round"/>
+    <path d="M64 96 C 130 74, 240 74, 300 98" fill="none" stroke="#e25689" stroke-width="4" stroke-linecap="round"/>
+    <text x="120" y="140" font-family="Segoe UI" font-size="15" font-weight="700" fill="#a2496a">seeded wrinkles · dog-ears · flat apex cap</text>
+  </g>
+</svg>

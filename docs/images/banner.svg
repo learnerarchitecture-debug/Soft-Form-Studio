@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 320" width="1200" height="320" role="img" aria-label="Plush - Soft Form Studio banner">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#2a2427"/>
+      <stop offset="1" stop-color="#3d333b"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#e25689"/>
+      <stop offset="1" stop-color="#f2a25c"/>
+    </linearGradient>
+    <linearGradient id="cream" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fff6ec"/>
+      <stop offset="1" stop-color="#ffdfe8"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1200" height="320" fill="url(#bg)"/>
+
+  <!-- plush pillow field -->
+  <g opacity="0.16">
+    <path d="M60 250c0-60 40-90 90-90s95 25 95 80-35 90-90 90-95-30-95-80z" fill="none" stroke="#ffffff" stroke-width="2"/>
+    <path d="M240 180c60-14 120 10 150 46s90 40 130 12 96-16 120 26" fill="none" stroke="#ffffff" stroke-width="2"/>
+    <ellipse cx="1180" cy="60" rx="90" ry="18"/>
+    <circle cx="950" cy="250" r="46"/>
+    <circle cx="1060" cy="200" r="26"/>
+  </g>
+
+  <!-- product mark -->
+  <g transform="translate(56,92)">
+    <rect x="0" y="0" width="136" height="136" rx="36" fill="url(#accent)"/>
+    <path d="M28 42c22-24 58-24 80 0M34 74c22-20 46-8 68 6" fill="none" stroke="#fffaf6" stroke-width="9" stroke-linecap="round"/>
+  </g>
+
+  <!-- wordmark -->
+  <g transform="translate(226,120)">
+    <text x="0" y="52" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="64" font-weight="800" fill="#fff6ec">Plush</text>
+    <text x="218" y="52" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="64" font-weight="300" fill="#f2a25c">· Soft Form Studio</text>
+    <rect x="2" y="72" width="332" height="4" rx="2" fill="url(#accent)"/>
+    <text x="2" y="112" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="22" letter-spacing="3" fill="#c9b8ae">BUILDING INTERIORS, EXPLAINED — BY ARCHINSIGHTS</text>
+  </g>
+
+  <!-- feature chips -->
+  <g transform="translate(232,228)" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="600">
+    <g fill="none" stroke="#e25689" stroke-width="1.6">
+      <rect x="0" y="0" width="132" height="30" rx="15"/>
+      <rect x="146" y="0" width="152" height="30" rx="15"/>
+      <rect x="312" y="0" width="138" height="30" rx="15"/>
+      <rect x="464" y="0" width="118" height="30" rx="15"/>
+      <rect x="596" y="0" width="150" height="30" rx="15"/>
+    </g>
+    <text x="16" y="20" fill="#ffd9e4">pillows</text>
+    <text x="162" y="20" fill="#ffe4cf">mattresses</text>
+    <text x="328" y="20" fill="#ffd9e4">curtains</text>
+    <text x="480" y="20" fill="#ffe4cf">coves</text>
+    <text x="612" y="20" fill="#ffd9e4">v2.0.0 · mm→ft</text>
+  </g>
+</svg>
